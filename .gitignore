@@ -1,0 +1,14 @@
+/*
+.idea
+
+!.gitignore
+!README.md
+!.bashrc
+
+!waybar/
+!niri/
+!wofi/
+!swaync/
+
+*.swp
+*.save

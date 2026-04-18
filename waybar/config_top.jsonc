@@ -1,0 +1,102 @@
+// -*- mode: jsonc -*-
+{
+  "margin": "5 20 -5 20",
+  "position": "top",
+  "height": 7,
+  "spacing": 1,
+  "modules-left": [
+    "niri/window",
+    "network",
+    "temperature",
+    "battery",
+    "power-profiles-daemon",
+    "custom/advanced-reboot"
+  ],
+  "modules-right": [
+    "group/media",
+    //sound settings
+    "custom/weather"
+  ],
+
+  //Module Config
+  "group/media": {
+    "modules": [
+      "mpris",
+      "pulseaudio"
+    ],
+    "orientation": "horizontal"
+  },
+  "hyprland/window": {
+    "format": "{initialTitle}",
+    "icon": true,
+    "icon-size": 14,
+    "rewrite": {
+      "": "Desktop",
+      "Mozilla Firefox": "Firefox",
+      "kitty": "Kitty"
+    }
+  },
+  "temperature": {
+    "format": "{}°C "
+  },
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "default": "",
+      "performance": "",
+      "balanced": "",
+      "power-saver": ""
+    }
+  },
+  "pulseaudio": {
+    // "scroll-step": 1, // %, can be a float
+    "format": "{icon}",
+    "format-bluetooth": "{volume}% {icon}",
+    "format-bluetooth-muted": " {icon}",
+    "format-muted": "",
+    "format-source": "",
+    "format-source-muted": "",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "kitty -e wiremix"
+  },
+  "network": {
+    "format": "{bandwidthTotalBits}"
+  },
+  "custom/weather": {
+    "exec": "$HOME/.config/waybar/waybar-weather/venv/bin/python $HOME/.config/waybar/waybar-weather/weather.py -u C 2>/dev/null",
+    "format": "{}",
+    "tooltip": true,
+    "interval": 3600,
+    "return-type": "json"
+  },
+  "battery": {
+    "format": "{power:.0f}W ⚡"
+  },
+  "custom/advanced-reboot": {
+    "format": " >> B I ⏻ S ",
+    "on-click": "systemctl reboot --firmware-setup",
+    "tooltip-format": "Reboot into BIOS"
+  },
+  "mpris": {
+    "format": " {player_icon} {title}",
+    "format-paused": " {status_icon} - {title}",
+    "player-icons": {
+      "default": "▶",
+      "mpv": "🎵"
+    },
+    "status-icons": {
+      "paused": "⏸"
+    },
+    "interval": 1
+  }
+}

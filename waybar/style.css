@@ -1,0 +1,178 @@
+* {
+  font-family: 'Noto Sans Mono', 'Font Awesome 6 Free', 'Font Awesome 6 Brands', monospace;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* THE ACTUAL BAR :3*/
+window#waybar {
+  background-color: rgba(62, 0, 96, 0.5);
+  color: #ffffff;
+  transition-duration: .5s;
+  border: 3px solid rgba(0, 0, 0, 0.7);
+  border-radius: 14px;
+}
+
+/* DEFAULT MODULE STYLE*/
+#temperature,
+#bluetooth,
+#power-profiles-daemon,
+#clock,
+#mpris,
+#custom-start,
+#battery,
+#tray,
+#cpu,
+#memory,
+#pulseaudio,
+#network,
+#window,
+#bigtray,
+#media,
+#custom-weather,
+#custom-advanced-reboot {
+  border: 2px solid #888;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px 2px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* PURPLE MODULE HOVER*/
+#temperature:hover,
+#battery:hover,
+#bluetooth:hover,
+#mpris:hover,
+#tray:hover,
+#cpu:hover,
+#memory:hover,
+#pulseaudio:hover,
+#network:hover,
+#custom-advanced-reboot:hover {
+  background-color: #888;
+}
+
+/* CORNER MODULES*/
+#clock,
+#window,
+#custom-start,
+#custom-weather {
+  border: 2px solid #ff0;
+}
+
+/* CORNER MODULE HOVER*/
+#clock:hover,
+#window:hover,
+#custom-start:hover,
+#custom-weather:hover {
+  background-color: #ff0;
+  color: #000;
+}
+
+/* GROUP MODULES */
+#bigtray,
+#media {
+  padding: 0;
+}
+
+/* IN-GROUP MODULES */
+#bigtray #pulseaudio,
+#bigtray #network,
+#bigtray #battery,
+#bigtray #bluetooth,
+#media #mpris,
+#media #pulseaudio {
+  border: 0 none transparent;
+  padding: 5px 7px;
+  margin: 0;
+  border-radius: 5px;
+}
+
+/* TASKBAR + WORKSPACES*/
+#taskbar,
+#workspaces {
+  margin: 5px 0;
+}
+#workspaces button,
+#taskbar button {
+  padding: 0;
+  margin: 0 5px 0 5px;
+}
+#taskbar button.active,
+#workspaces button.active  {
+  border-bottom: 2px solid #ff0;
+  border-radius: 25px;
+}
+#workspaces button:hover,
+#taskbar button:hover {
+  border-bottom: 2px solid #fff;
+  background-color: transparent;
+}
+#workspaces {
+  padding-right: 5px;
+}
+
+/* BAR EDGE FIXES*/
+#custom-start,
+#window {
+  margin-left: 5px;
+}
+#custom-weather,
+#clock {
+  margin-right: 5px;
+}
+
+/* BATTERY LEVEL */
+#battery.critical:not(.charging) {
+    background-color: #f53c3c;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* POWER PROFILES */
+#power-profiles-daemon.performance {
+    background-color: #f53c3c;
+    color: #ffffff;
+}
+
+#power-profiles-daemon.balanced {
+    background-color: #2980b9;
+    color: #ffffff;
+}
+
+#power-profiles-daemon.power-saver {
+    background-color: #2ecc71;
+    color: #000000;
+}
+
+/* TASKBAR BG */
+#taskbar {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 7px;
+  border-left: 2px solid #888;
+  border-right: 2px solid #888;
+}
+
+/* TEXT COLOR OVERRIDES */
+#window {
+    color: #419df5;
+}
+#battery {
+    color: #ff0;
+}
+#custom-advanced-reboot {
+    color: #f00;
+}
+#cpu {
+    color: #0f0;
+}
+#memory {
+    color: #00294f;
+}
+#bigtray {
+    color: #7710F1;
+}

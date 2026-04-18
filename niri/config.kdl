@@ -1,0 +1,258 @@
+// ╔══════════════════════════════════════════════════════════════╗
+// ║         Shyrk-Niri — ported from Shyrkland (Hyprland)       ║
+// ║         github.com/BodersTheSharkNardoragon/Hyprland-Config  ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+// ══════════════════════════════════════
+//  OUTPUT / MONITORS
+// ══════════════════════════════════════
+
+output "eDP-1" {
+    mode "1920x1080" refresh=60.0
+    scale 1
+    // Add second monitor below if needed:
+    // output "HDMI-A-1" {
+    //     mode "1920x1080" refresh=60.0
+    //     position x=1920 y=0
+    // }
+}
+
+// ══════════════════════════════════════
+//  ENVIRONMENT VARIABLES
+// ══════════════════════════════════════
+
+environment {
+    "XCURSOR_SIZE"         "14"
+    "QT_QPA_PLATFORMTHEME" "kde"
+}
+
+// ══════════════════════════════════════
+//  INPUT
+// ══════════════════════════════════════
+
+input {
+    keyboard {
+        xkb {
+            layout "gb"
+        }
+    }
+
+    touchpad {
+        natural-scroll
+        tap                  // tap-to-click
+        // Niri handles 3-finger horizontal swipe for workspace switching natively
+    }
+
+    mouse {
+        // sensitivity 0  // uncomment + set if needed
+    }
+}
+
+cursor {
+    xcursor-size 14
+}
+
+// ══════════════════════════════════════
+//  LAYOUT  (niri is a scrolling tiler —
+//  same as layout = scrolling in your
+//  old hyprland.conf, so you'll feel
+//  right at home)
+// ══════════════════════════════════════
+
+layout {
+    gaps 20
+
+    // Yellow→Red gradient active border, purple inactive — same as hyprland
+    border {
+        width 2
+        active-gradient   from="#ffff00" to="#ff0000" angle=45
+        inactive-gradient from="#aa00ff55" to="#0000ff55" angle=45
+    }
+
+    // Using border above instead of focus ring
+    focus-ring {
+        off
+    }
+
+    shadow {
+        on
+        softness 10.0
+        spread   2.0
+        color    "#1a1a1aee"
+    }
+
+    // Default column takes half the screen — adjust to taste
+    default-column-width {
+        proportion 0.5
+    }
+
+    center-focused-column "never"
+}
+
+// ══════════════════════════════════════
+//  ANIMATIONS
+// ══════════════════════════════════════
+
+animations {
+    // Window open  (was: windowsIn easeOutQuint popin 87%)
+    window-open {
+        duration-ms 210
+        easing "ease-out-quint"
+    }
+
+    // Window close (was: windowsOut linear popin 87%)
+    window-close {
+        duration-ms 150
+        easing "linear"
+    }
+
+    // Moving windows (was: windows easeOutQuint)
+    window-movement {
+        duration-ms 250
+        easing "ease-out-quint"
+    }
+
+    // Workspace switch (was: workspaces almostLinear fade)
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+}
+
+// ══════════════════════════════════════
+//  WINDOW RULES
+// ══════════════════════════════════════
+
+// Rounded corners (rounding = 10 in hyprland)
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+}
+
+// Inactive window opacity (inactive_opacity = 0.9)
+window-rule {
+    match is-focused=false
+    opacity 0.9
+}
+
+// ══════════════════════════════════════
+//  AUTOSTART
+// ══════════════════════════════════════
+
+// Wallpaper — hyprpaper works on niri, config unchanged
+spawn-at-startup "sh" "-c" "hyprpaper"
+
+// Dual waybar setup
+spawn-at-startup "sh" "-c" "waybar -c ~/.config/waybar/config_top.jsonc -s ~/.config/waybar/style.css"
+spawn-at-startup "sh" "-c" "waybar -c ~/.config/waybar/config_bottom.jsonc -s ~/.config/waybar/style.css"
+
+// KDE Connect
+spawn-at-startup "kdeconnect-indicator"
+
+// Jellyfin Discord RPC
+spawn-at-startup "jellyfin-rpc"
+
+// ══════════════════════════════════════
+//  KEYBINDS
+// ══════════════════════════════════════
+// Mod = Super key (same as $mainMod = SUPER)
+
+binds {
+    // ── Terminal ──────────────────────────────────
+    Mod+Return  { spawn "kitty"; }
+    Ctrl+Alt+T  { spawn "kitty"; }
+
+    // ── System monitor ────────────────────────────
+    Ctrl+Shift+Escape { spawn "sh" "-c" "kitty -e htop"; }
+
+    // ── File manager ──────────────────────────────
+    Mod+E { spawn "dolphin"; }
+
+    // ── App launcher (wofi) ───────────────────────
+    // Was: Mod+SUPER_L (effectively double-tap Super) → moved to Mod+Space
+    Mod+Space {
+        spawn "sh" "-c" "pgrep wofi && pkill wofi || wofi --show='drun' --yoffset=500 --xoffset=20 --height=460 --width=300";
+    }
+
+    // ── Screenshot → clipboard ────────────────────
+    Print { spawn "sh" "-c" "grim - | wl-copy"; }
+
+    // ── Reload waybar ─────────────────────────────
+    Mod+W {
+        spawn "sh" "-c" "killall waybar; sleep 0.5; waybar -c ~/.config/waybar/config_top.jsonc -s ~/.config/waybar/style.css & waybar -c ~/.config/waybar/config_bottom.jsonc -s ~/.config/waybar/style.css &";
+    }
+
+    // ── Monitor toggle ────────────────────────────
+    Mod+P { spawn "sh" "-c" "kitty -e ~/.local/bin/toggleMonitors.sh"; }
+
+    // ── Window management ─────────────────────────
+    Mod+Q  { close-window; }
+    Alt+F4 { close-window; }
+
+    Mod+F { fullscreen-window; }
+    Mod+V { toggle-window-floating; }
+
+    // ── Focus movement ────────────────────────────
+    Mod+Left  { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-down; }
+
+    // ── Move windows ──────────────────────────────
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Down  { move-window-down; }
+
+    // ── Workspaces 1–10 ───────────────────────────
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+0 { focus-workspace 10; }
+
+    Mod+Shift+1 { move-window-to-workspace 1; }
+    Mod+Shift+2 { move-window-to-workspace 2; }
+    Mod+Shift+3 { move-window-to-workspace 3; }
+    Mod+Shift+4 { move-window-to-workspace 4; }
+    Mod+Shift+5 { move-window-to-workspace 5; }
+    Mod+Shift+6 { move-window-to-workspace 6; }
+    Mod+Shift+7 { move-window-to-workspace 7; }
+    Mod+Shift+8 { move-window-to-workspace 8; }
+    Mod+Shift+9 { move-window-to-workspace 9; }
+    Mod+Shift+0 { move-window-to-workspace 10; }
+
+    // Scroll through workspaces with Mod+scroll
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+
+    // ── "Scratchpad" ──────────────────────────────
+    // Niri has no native scratchpad — workspace 10 is used instead.
+    // Mod+S jumps to it, Mod+Shift+S sends the focused window there.
+    Mod+S       { focus-workspace 10; }
+    Mod+Shift+S { move-window-to-workspace 10; }
+
+    // ── Volume ────────────────────────────────────
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+    // ── Brightness ────────────────────────────────
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "-e4" "-n2" "set" "5%+"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "-e4" "-n2" "set" "5%-"; }
+
+    // ── Media ─────────────────────────────────────
+    XF86AudioNext  allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev  allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioPlay  allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause allow-when-locked=true { spawn "playerctl" "play-pause"; }
+}

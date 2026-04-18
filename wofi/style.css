@@ -1,0 +1,49 @@
+window {
+    margin: 0px;
+    border: 3px solid rgba(0, 0, 0, 0.5); /* Nordic Blue border */
+    background-color: rgba(62, 0, 96, 0.5); /* Semi-transparent dark background */
+    border-radius: 12px;
+}
+
+#input {
+    margin: 5px;
+    border: 2px solid #888;
+    color: #eceff4;
+    background-color: transparent;
+    border-radius: 8px;
+}
+
+#inner-box {
+    margin: 5px;
+    border: none;
+    background-color: transparent;
+}
+
+#outer-box {
+    margin: 5px;
+    border: none;
+    background-color: transparent;
+}
+
+#scroll {
+    margin: 0px;
+    border: none;
+}
+
+#text {
+    margin: 5px;
+    border: none;
+    color: #fff;
+}
+
+#entry:selected {
+    background-color: #508;
+    border-radius: 8px;
+    outline: none;
+    border: 2px solid #ff0;
+}
+
+#text:selected {
+    color: #ff0;
+    font-weight: bold;
+}
