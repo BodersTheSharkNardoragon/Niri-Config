@@ -1,5 +1,5 @@
-# Shyrkland
-*(Shark-Hyprland)*
+# Shyrki
+*(Shark-Niri)*
 
 ## Pictures
 *I haven't taken pictures because thats effort frick you*
@@ -9,10 +9,10 @@ Clone the repo and copy the contents into ~/.config
 
 ```
 # Clone the repo
-git clone https://github.com/bodersthesharknardoragon/hyprland-config
+git clone https://github.com/bodersthesharknardoragon/niri-config
 
 # Copy contents to ~/.config
-cd hyprland-config
+cd niri-config
 rclone copy -i . ~/.config
 ```
 
