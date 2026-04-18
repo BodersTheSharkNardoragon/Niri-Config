@@ -143,11 +143,11 @@ window-rule {
 // ══════════════════════════════════════
 
 // Wallpaper — hyprpaper works on niri, config unchanged
-spawn-at-startup "sh" "-c" "hyprpaper"
+spawn-at-startup "hyprpaper"
 
 // Dual waybar setup
-spawn-at-startup "sh" "-c" "waybar -c ~/.config/waybar/config_top.jsonc -s ~/.config/waybar/style.css"
-spawn-at-startup "sh" "-c" "waybar -c ~/.config/waybar/config_bottom.jsonc -s ~/.config/waybar/style.css"
+spawn-sh-at-startup "waybar -c ~/.config/waybar/config_top.jsonc"
+spawn-sh-at-startup "waybar -c ~/.config/waybar/config_bottom.jsonc"
 
 // KDE Connect
 spawn-at-startup "kdeconnect-indicator"
