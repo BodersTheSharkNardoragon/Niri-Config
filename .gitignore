@@ -9,6 +9,11 @@
 !niri/
 !wofi/
 !swaync/
+!hypr/
+
+hypr/*
+
+!hypr/hyprpaper/
 
 *.swp
 *.save
