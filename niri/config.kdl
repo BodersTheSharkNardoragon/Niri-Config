@@ -82,9 +82,8 @@ layout {
     }
 }
 
-spawn-at-startup "wofi"
-spawn-sh-at-startup "qs -c waybar -c ~/.config/waybar/config_top.jsonc"
-spawn-sh-at-startup "qs -c waybar -c ~/.config/waybar/config_bottom.jsonc"
+spawn-sh-at-startup "sleep 3 && /usr/bin/waybar -c /home/boders/.config/waybar/config_top.jsonc"
+spawn-sh-at-startup "sleep 3 && /usr/bin/waybar -c /home/boders/.config/waybar/config_bottom.jsonc"
 
 hotkey-overlay {
     //skip-at-startup (leaving this for now)
