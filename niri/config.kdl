@@ -129,7 +129,7 @@ binds {
     Super+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
 // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
-    Super+SUPER_L hotkey-overlay-title="Application Picker: wofi" { spawn-sh "pkill wofi || wofi --show='drun'"; }
+    Super+X hotkey-overlay-title="Application Picker: wofi" { spawn-sh "pkill wofi || wofi --show='drun'"; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 2.0"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
