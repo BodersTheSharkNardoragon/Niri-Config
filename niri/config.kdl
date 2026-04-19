@@ -37,7 +37,7 @@ output "eDP-1" {
 
 // https://niri-wm.github.io/niri/Configuration:-Layout
 layout {
-    gaps 2
+    gaps 15
     center-focused-column "never"
     preset-column-widths {
         proportion 0.33333
@@ -94,7 +94,7 @@ screenshot-path null
 // https://niri-wm.github.io/niri/Configuration:-Animations
 animations {
 // Slow down all animations by this factor. Values below 1 speed them up instead.
-    slowdown 1.0
+    slowdown 0.7
 }
 
 // https://niri-wm.github.io/niri/Configuration:-Window-Rules
