@@ -1,213 +1,227 @@
-// ╔══════════════════════════════════════════════════════════════╗
-// ║         Shyrk-Niri — ported from Shyrkland (Hyprland)       ║
-// ║         github.com/BodersTheSharkNardoragon/Hyprland-Config  ║
-// ╚══════════════════════════════════════════════════════════════╝
+// This config is in the KDL format: https://kdl.dev
+// https://niri-wm.github.io/niri/Configuration:-Introduction
 
-// ══════════════════════════════════════
-//  OUTPUT / MONITORS
-// ══════════════════════════════════════
-
-output "eDP-1" {
-    mode "1920x1080" refresh=60.0
-    scale 1
-    // Add second monitor below if needed:
-    // output "HDMI-A-1" {
-    //     mode "1920x1080" refresh=60.0
-    //     position x=1920 y=0
-    // }
-}
-
-// ══════════════════════════════════════
-//  ENVIRONMENT VARIABLES
-// ══════════════════════════════════════
-
-environment {
-    "XCURSOR_SIZE"         "14"
-    "QT_QPA_PLATFORMTHEME" "kde"
-}
-
-// ══════════════════════════════════════
-//  INPUT
-// ══════════════════════════════════════
-
+// Input device configuration.
+// https://niri-wm.github.io/niri/Configuration:-Input
 input {
     keyboard {
         xkb {
             layout "gb"
         }
+        numlock
     }
 
     touchpad {
+        tap
+        dwt
+        drag false
         natural-scroll
-        tap                  // tap-to-click
-        // Niri handles 3-finger horizontal swipe for workspace switching natively
+        scroll-method "two-finger"
     }
 
     mouse {
-        // sensitivity 0  // uncomment + set if needed
+        natural-scroll
     }
+
+    focus-follows-mouse
+    mod-key "Super"
 }
 
-cursor {
-    xcursor-size 14
+// https://niri-wm.github.io/niri/Configuration:-Outputs
+output "eDP-1" {
+    mode "1920x1080@60.0"
+    scale 1
+    transform "normal"
+    position x=1280 y=0
 }
 
-// ══════════════════════════════════════
-//  LAYOUT  (niri is a scrolling tiler —
-//  same as layout = scrolling in your
-//  old hyprland.conf, so you'll feel
-//  right at home)
-// ══════════════════════════════════════
-
+// https://niri-wm.github.io/niri/Configuration:-Layout
 layout {
-    gaps 20
-
-    // Yellow→Red gradient active border, purple inactive — same as hyprland
-    border {
-        width 2
-        active-gradient   from="#ffff00" to="#ff0000" angle=45
-        inactive-gradient from="#aa00ff55" to="#0000ff55" angle=45
+    gaps 2
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
     }
+    default-column-width { proportion 0.5; }
 
-    // Using border above instead of focus ring
     focus-ring {
         off
+        //width 2
+        //active-color "#ff0"
+        //inactive-color "#aa5"
+        //active-gradient from="#ff0" to="#f00" angle=45
+    }
+
+    border {
+        width 2
+        active-color "#ff0"
+        inactive-color "#aa5"
+        active-gradient from="#ff0" to="#f00" angle=45
+        urgent-color "#f00"
     }
 
     shadow {
         on
-        softness 10.0
-        spread   2.0
-        color    "#1a1a1aee"
+        draw-behind-window true
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
     }
 
-    // Default column takes half the screen — adjust to taste
-    default-column-width {
-        proportion 0.5
+// Struts shrink the area occupied by windows, similarly to layer-shell panels.
+// You can think of them as a kind of outer gaps. They are set in logical pixels.
+// Left and right struts will cause the next window to the side to always be visible.
+// Top and bottom struts will simply add outer gaps in addition to the area occupied by
+// layer-shell panels and regular gaps.
+    struts {
+        left 20
+        right 20
     }
-
-    center-focused-column "never"
 }
 
-// ══════════════════════════════════════
-//  ANIMATIONS
-// ══════════════════════════════════════
+spawn-at-startup "wofi"
+spawn-sh-at-startup "qs -c waybar -c ~/.config/waybar/config_top.jsonc"
+spawn-sh-at-startup "qs -c waybar -c ~/.config/waybar/config_bottom.jsonc"
 
+hotkey-overlay {
+    //skip-at-startup (leaving this for now)
+}
+
+screenshot-path null
+
+// https://niri-wm.github.io/niri/Configuration:-Animations
 animations {
-    // Window open  (was: windowsIn easeOutQuint popin 87%)
-    window-open {
-        duration-ms 210
-        easing "ease-out-quint"
-    }
-
-    // Window close (was: windowsOut linear popin 87%)
-    window-close {
-        duration-ms 150
-        easing "linear"
-    }
-
-    // Moving windows (was: windows easeOutQuint)
-    window-movement {
-        duration-ms 250
-        easing "ease-out-quint"
-    }
-
-    // Workspace switch (was: workspaces almostLinear fade)
-    workspace-switch {
-        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
-    }
-
-    horizontal-view-movement {
-        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
-    }
+// Slow down all animations by this factor. Values below 1 speed them up instead.
+    slowdown 1.0
 }
 
-// ══════════════════════════════════════
-//  WINDOW RULES
-// ══════════════════════════════════════
+// https://niri-wm.github.io/niri/Configuration:-Window-Rules
+// Work around WezTerm's initial configure bug
+// by setting an empty default-column-width.
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+}
 
-// Rounded corners (rounding = 10 in hyprland)
+// Open the Firefox picture-in-picture player as floating by default.
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
 window-rule {
     geometry-corner-radius 10
     clip-to-geometry true
 }
 
-// Inactive window opacity (inactive_opacity = 0.9)
-window-rule {
-    match is-focused=false
-    opacity 0.9
-}
-
-// ══════════════════════════════════════
-//  AUTOSTART
-// ══════════════════════════════════════
-
-// Wallpaper — hyprpaper works on niri, config unchanged
-spawn-at-startup "hyprpaper"
-
-// Dual waybar setup
-spawn-sh-at-startup "waybar -c ~/.config/waybar/config_top.jsonc"
-spawn-sh-at-startup "waybar -c ~/.config/waybar/config_bottom.jsonc"
-
-// KDE Connect
-spawn-at-startup "kdeconnect-indicator"
-
-// Jellyfin Discord RPC
-spawn-at-startup "jellyfin-rpc"
-
-// ══════════════════════════════════════
-//  KEYBINDS
-// ══════════════════════════════════════
-// Mod = Super key (same as $mainMod = SUPER)
-
 binds {
-    // ── Terminal ──────────────────────────────────
-    Mod+Return  { spawn "kitty"; }
-    Ctrl+Alt+T  { spawn "kitty"; }
+// To find an XKB name for a particular key, you may use a program like wev.
 
-    // ── System monitor ────────────────────────────
-    Ctrl+Shift+Escape { spawn "sh" "-c" "kitty -e htop"; }
+// Mod-Shift-/, which is usually the same as Mod-?,
+// shows a list of important hotkeys.
+    Mod+Shift+Slash { show-hotkey-overlay; }
 
-    // ── File manager ──────────────────────────────
-    Mod+E { spawn "dolphin"; }
+// Terminal, Lock screen
+    Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+    Super+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
-    // ── App launcher (wofi) ───────────────────────
-    // Was: Mod+SUPER_L (effectively double-tap Super) → moved to Mod+Space
-    Mod+Space {
-        spawn "sh" "-c" "pgrep wofi && pkill wofi || wofi --show='drun' --yoffset=500 --xoffset=20 --height=460 --width=300";
-    }
+// Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
+    Super+SUPER_L hotkey-overlay-title="Application Picker: wofi" { spawn-sh "pkill wofi || wofi --show='drun'"; }
 
-    // ── Screenshot → clipboard ────────────────────
-    Print { spawn "sh" "-c" "grim - | wl-copy"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 2.0"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
 
-    // ── Reload waybar ─────────────────────────────
-    Mod+W {
-        spawn "sh" "-c" "killall waybar; sleep 0.5; waybar -c ~/.config/waybar/config_top.jsonc -s ~/.config/waybar/style.css & waybar -c ~/.config/waybar/config_bottom.jsonc -s ~/.config/waybar/style.css &";
-    }
+    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
+    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
 
-    // ── Monitor toggle ────────────────────────────
-    Mod+P { spawn "sh" "-c" "kitty -e ~/.local/bin/toggleMonitors.sh"; }
+// You can use regular spawn with multiple arguments too (to avoid going through "sh"),
+// but you need to manually put each argument in separate "" quotes.
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
 
-    // ── Window management ─────────────────────────
-    Mod+Q  { close-window; }
-    Alt+F4 { close-window; }
+    Mod+O repeat=false { toggle-overview; }
+    Mod+Q repeat=false { close-window; }
 
-    Mod+F { fullscreen-window; }
-    Mod+V { toggle-window-floating; }
-
-    // ── Focus movement ────────────────────────────
     Mod+Left  { focus-column-left; }
-    Mod+Right { focus-column-right; }
-    Mod+Up    { focus-window-up; }
     Mod+Down  { focus-window-down; }
+    Mod+Up    { focus-window-up; }
+    Mod+Right { focus-column-right; }
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
 
-    // ── Move windows ──────────────────────────────
-    Mod+Shift+Left  { move-column-left; }
-    Mod+Shift+Right { move-column-right; }
-    Mod+Shift+Up    { move-window-up; }
-    Mod+Shift+Down  { move-window-down; }
+    Mod+Ctrl+Left  { move-column-left; }
+    Mod+Ctrl+Down  { move-window-down; }
+    Mod+Ctrl+Up    { move-window-up; }
+    Mod+Ctrl+Right { move-column-right; }
+    Mod+Ctrl+H     { move-column-left; }
+    Mod+Ctrl+J     { move-window-down; }
+    Mod+Ctrl+K     { move-window-up; }
+    Mod+Ctrl+L     { move-column-right; }
 
-    // ── Workspaces 1–10 ───────────────────────────
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    Mod+Ctrl+Home { move-column-to-first; }
+    Mod+Ctrl+End  { move-column-to-last; }
+
+    Mod+Shift+Left  { focus-monitor-left; }
+    Mod+Shift+Down  { focus-monitor-down; }
+    Mod+Shift+Up    { focus-monitor-up; }
+    Mod+Shift+Right { focus-monitor-right; }
+    Mod+Shift+H     { focus-monitor-left; }
+    Mod+Shift+J     { focus-monitor-down; }
+    Mod+Shift+K     { focus-monitor-up; }
+    Mod+Shift+L     { focus-monitor-right; }
+
+    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
+
+    Mod+Page_Down      { focus-workspace-down; }
+    Mod+Page_Up        { focus-workspace-up; }
+    Mod+U              { focus-workspace-down; }
+    Mod+I              { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+U         { move-column-to-workspace-down; }
+    Mod+Ctrl+I         { move-column-to-workspace-up; }
+
+    Mod+Shift+Page_Down { move-workspace-down; }
+    Mod+Shift+Page_Up   { move-workspace-up; }
+    Mod+Shift+U         { move-workspace-down; }
+    Mod+Shift+I         { move-workspace-up; }
+
+    Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+
+    Mod+WheelScrollRight      { focus-column-right; }
+    Mod+WheelScrollLeft       { focus-column-left; }
+    Mod+Ctrl+WheelScrollRight { move-column-right; }
+    Mod+Ctrl+WheelScrollLeft  { move-column-left; }
+
+    Mod+Shift+WheelScrollDown      { focus-column-right; }
+    Mod+Shift+WheelScrollUp        { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+// Mod+TouchpadScrollDown { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
+// Mod+TouchpadScrollUp   { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
+
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
@@ -217,42 +231,67 @@ binds {
     Mod+7 { focus-workspace 7; }
     Mod+8 { focus-workspace 8; }
     Mod+9 { focus-workspace 9; }
-    Mod+0 { focus-workspace 10; }
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+    Mod+Ctrl+5 { move-column-to-workspace 5; }
+    Mod+Ctrl+6 { move-column-to-workspace 6; }
+    Mod+Ctrl+7 { move-column-to-workspace 7; }
+    Mod+Ctrl+8 { move-column-to-workspace 8; }
+    Mod+Ctrl+9 { move-column-to-workspace 9; }
 
-    Mod+Shift+1 { move-window-to-workspace 1; }
-    Mod+Shift+2 { move-window-to-workspace 2; }
-    Mod+Shift+3 { move-window-to-workspace 3; }
-    Mod+Shift+4 { move-window-to-workspace 4; }
-    Mod+Shift+5 { move-window-to-workspace 5; }
-    Mod+Shift+6 { move-window-to-workspace 6; }
-    Mod+Shift+7 { move-window-to-workspace 7; }
-    Mod+Shift+8 { move-window-to-workspace 8; }
-    Mod+Shift+9 { move-window-to-workspace 9; }
-    Mod+Shift+0 { move-window-to-workspace 10; }
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Comma  { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-column-width-back; }
 
-    // Scroll through workspaces with Mod+scroll
-    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
-    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
 
-    // ── "Scratchpad" ──────────────────────────────
-    // Niri has no native scratchpad — workspace 10 is used instead.
-    // Mod+S jumps to it, Mod+Shift+S sends the focused window there.
-    Mod+S       { focus-workspace 10; }
-    Mod+Shift+S { move-window-to-workspace 10; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
 
-    // ── Volume ────────────────────────────────────
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    Mod+M { maximize-window-to-edges; }
 
-    // ── Brightness ────────────────────────────────
-    XF86MonBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "-e4" "-n2" "set" "5%+"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "-e4" "-n2" "set" "5%-"; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
 
-    // ── Media ─────────────────────────────────────
-    XF86AudioNext  allow-when-locked=true { spawn "playerctl" "next"; }
-    XF86AudioPrev  allow-when-locked=true { spawn "playerctl" "previous"; }
-    XF86AudioPlay  allow-when-locked=true { spawn "playerctl" "play-pause"; }
-    XF86AudioPause allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    Mod+C { center-column; }
+
+    Mod+Ctrl+C { center-visible-columns; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    Mod+V       { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    Mod+W { toggle-column-tabbed-display; }
+
+    Mod+Space       { switch-layout "next"; }
+    Mod+Shift+Space { switch-layout "prev"; }
+
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+    //TODO: Print = screenshot-screen; Print(fn-key) = screenshot;
+
+// Applications such as remote-desktop clients and software KVM switches may
+// request that niri stops processing the keyboard shortcuts defined here
+// so they may, for example, forward the key presses as-is to a remote machine.
+// It's a good idea to bind an escape hatch to toggle the inhibitor,
+// so a buggy application can't hold your session hostage.
+//
+// The allow-inhibiting=false property can be applied to other binds as well,
+// which ensures niri always processes them, even when an inhibitor is active.
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    Ctrl+Alt+Delete { quit; }
+
+    Mod+Shift+P { power-off-monitors; }
 }
