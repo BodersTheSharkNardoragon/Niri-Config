@@ -82,8 +82,9 @@ layout {
     }
 }
 
-spawn-sh-at-startup "sleep 3 && /usr/bin/waybar -c /home/boders/.config/waybar/config_top.jsonc"
-spawn-sh-at-startup "sleep 3 && /usr/bin/waybar -c /home/boders/.config/waybar/config_bottom.jsonc"
+spawn-sh-at-startup "sleep 3 && /usr/bin/waybar -c ~/.config/waybar/config_top.jsonc"
+spawn-sh-at-startup "sleep 3 && /usr/bin/waybar -c ~/.config/waybar/config_bottom.jsonc"
+spawn-sh-at-startup "swaybg -i -m fill ~/.config/niri/assets/Wallpaper.jpg"
 
 hotkey-overlay {
     //skip-at-startup (leaving this for now)
