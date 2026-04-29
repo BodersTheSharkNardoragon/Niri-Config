@@ -3,6 +3,8 @@
 
 // Input device configuration.
 // https://niri-wm.github.io/niri/Configuration:-Input
+prefer-no-csd
+
 input {
     keyboard {
         xkb {
